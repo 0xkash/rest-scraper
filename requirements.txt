@@ -1,0 +1,5 @@
+fastapi
+uvicorn
+debugpy
+python-dotenv
+fastapi-router-controller
