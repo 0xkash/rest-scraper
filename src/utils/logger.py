@@ -13,6 +13,13 @@ class Logger:
         self.file_handler = logging.FileHandler(time.strftime(Config.get("LOG_PATH"), time.localtime()))
         self.file_handler.setFormatter(formatter)
 
+    def __log(self, level: int, message: str) -> None:
+        logger = logging.getLogger(self.name)
+        logger.addHandler(self.file_handler)
+        logger.setLevel(level)
+
+        logger.log(level, message)
+
     def debug(self, message: str) -> None:
         if Config.get("ENVIRONMENT") == "production":
             return
@@ -30,10 +37,3 @@ class Logger:
 
     def critical(self, message: str) -> None:
         self.__log(logging.CRITICAL, message)
-
-    def __log(self, level: int, message: str) -> None:
-        logger = logging.getLogger(self.name)
-        logger.addHandler(self.file_handler)
-        logger.setLevel(level)
-
-        logger.log(level, message)
