@@ -10,7 +10,9 @@ class Logger:
         )
 
         self.name = name
-        self.file_handler = logging.FileHandler(time.strftime(Config.get("LOG_PATH"), time.localtime()))
+        self.file_handler = logging.FileHandler(
+            time.strftime(Config.get("LOG_PATH"), time.localtime())
+        )
         self.file_handler.setFormatter(formatter)
 
     def __log(self, level: int, message: str) -> None:

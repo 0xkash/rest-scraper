@@ -28,7 +28,10 @@ class ExceptionHandler:
                 }
             )
 
-        message = 'An error occured during {} handling. Error: {}'.format(request.state.func_name, exception)
+        message = 'An error occured during {} handling. Error: {}'.format(
+            request.state.func_name,
+            exception
+        )
         logger.error(message)
         return JSONResponse(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -38,7 +41,7 @@ class ExceptionHandler:
         )
 
 class RequestHandler(BaseHTTPMiddleware):
-    def __get_request_handler(_, request: Request) -> str:
+    def __get_request_handler(_, request: Request) -> str|None:
         routes: List[APIRoute] = request.app.routes
         for route in routes:
             if route.path == request.url.path:
