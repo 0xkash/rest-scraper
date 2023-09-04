@@ -3,3 +3,7 @@ uvicorn
 debugpy
 python-dotenv
 fastapi-router-controller
+validators
+requests
+beautifulsoup4
+selenium
