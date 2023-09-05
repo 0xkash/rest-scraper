@@ -3,7 +3,7 @@ from .config import Config
 import time
 
 class Logger:
-    def __init__(self, name: str) -> None:
+    def __init__(self, name: str, log_path: str|None = None) -> None:
         formatter = logging.Formatter(
             Config.get("LOG_FORMAT"),
             Config.get("LOG_DATE_FORMAT")
@@ -11,7 +11,7 @@ class Logger:
 
         self.name = name
         self.file_handler = logging.FileHandler(
-            time.strftime(Config.get("LOG_PATH"), time.localtime())
+            time.strftime(Config.get("LOG_PATH") if not log_path else log_path, time.localtime())
         )
         self.file_handler.setFormatter(formatter)
 

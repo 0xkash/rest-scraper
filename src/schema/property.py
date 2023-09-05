@@ -1,12 +1,19 @@
+from typing import List
+from datetime import datetime
+
 from pydantic import BaseModel
 
 class Property(BaseModel):
-    name: str
-    description: str
-    price: float
-    service_costs: float
+    url: str
     address: str
     city: str
-    area: str
-    bedrooms: int | None = None
-    image: str | None = None
+    price: float
+    area: int
+    available_on: str | None = None
+    rooms: int | None = None
+    description: str | None = None
+    meta_data: dict[str, str] | None = None
+    images: List[str] | None = None
+    created_on: datetime = datetime.now()
+    updated_on: datetime | None = None
+    deleted_on: datetime | None = None
