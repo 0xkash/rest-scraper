@@ -12,7 +12,7 @@ class Scraper(BaseModel):
     deleted_on: datetime | None = None
 
 class ScraperFilter(BaseModel):
-    city: List[str] | str | None = None
+    city: List[str]
     min_price: float | None = None
     max_price: float | None = None
     min_area: float | None = None

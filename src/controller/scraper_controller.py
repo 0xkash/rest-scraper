@@ -26,7 +26,7 @@ class ScraperController:
         "",
         tags=["scraper"], 
         summary="Add new scraper action to the queue based on the given parameters", 
-        response_model=dict[str, str],
+        response_model=List[Property],
         status_code=status.HTTP_200_OK
     )
     def scrape(self, request: ScraperRequest):
