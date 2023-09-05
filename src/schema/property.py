@@ -8,7 +8,7 @@ class Property(BaseModel):
     address: str
     city: str
     price: float
-    area: str
+    area: int
     available_on: str | None = None
     rooms: int | None = None
     description: str | None = None

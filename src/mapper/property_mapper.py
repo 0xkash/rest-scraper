@@ -22,8 +22,8 @@ class PropertyMapper:
         return int(rooms.replace("Kamers:", "")) if rooms else None
     
     @staticmethod
-    def parse_area(area: str) -> str:
-        return area.replace("Woonoppervlak:", "").lstrip() # remove nbsp
+    def parse_area(area: str) -> int:
+        return int(area.replace("Woonoppervlak:", "").replace("m²", "").replace(",", "."))
     
     @staticmethod
     def parse_images(images: str) -> List[str]:
