@@ -6,6 +6,8 @@ from .config import Config
 engine = create_engine(Config.get('DATABASE_URL'))
 session = sessionmaker(bind=engine, autocommit=False, autoflush=False)
 
+# TODO: Check if database is online
+
 class Database:
     """
     Database class to get a database session
