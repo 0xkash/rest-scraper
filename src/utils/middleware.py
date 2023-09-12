@@ -41,7 +41,7 @@ class ExceptionHandler:
         )
 
 class RequestHandler(BaseHTTPMiddleware):
-    def __get_request_handler(_, request: Request) -> str|None:
+    def __get_request_handler(self, request: Request) -> str|None:
         routes: List[APIRoute] = request.app.routes
         for route in routes:
             if route.path == request.url.path:
