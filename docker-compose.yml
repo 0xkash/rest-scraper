@@ -1,10 +1,37 @@
+version: '3.8'
+
 services:
   app:
     build: .
     container_name: python-server
-    command: uvicorn src.main:app --host 0.0.0.0 --port 80 --reload
+    command: bash -c "alembic upgrade head && uvicorn src.main:app --host 0.0.0.0 --port 80 --reload"
     ports:
       - 80:80
       - 5678:5678
     volumes:
       - .:/app
+    depends_on:
+      - db
+  
+  db:
+    image: postgres:13.1
+    container_name: postgres
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - POSTGRES_DB=${POSTGRES_DB:-postgres}
+    ports:
+      - 5432:5432
+    volumes:
+      - ./docker/postgres-data:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL:-admin@admin.com}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD:-admin}
+    ports:
+      - 5050:80
+    depends_on:
+      - db

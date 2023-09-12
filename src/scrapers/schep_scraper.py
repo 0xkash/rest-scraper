@@ -1,8 +1,7 @@
-import traceback
 from typing import List
 
-from selenium import webdriver
-from selenium.webdriver import FirefoxOptions
+from fastapi import HTTPException
+
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
@@ -18,24 +17,14 @@ from utils.logger import Logger
 
 logger = Logger(__name__, "./logs/schep-scraper-%Y-%m-%d.log")
 
-# TODO: Rewrite this class (This might be faster and less cpu intensive)
-    # TODO: Scrape based on selected city
-    # TODO: Scrape every found address and map it to a property object
-    # TODO: Check for filters and compare it to the property
-    # TODO: Automatic pagination until the end of the page
-
 class SchepScraper(BaseScraper):
-    def __init__(self, filters: ScraperFilter | None = None):
-        self.BASE_URL = "https://schepvastgoedmanagers.nl"
-        self.filters = filters
-        self.selected_addresses: dict[str, str] = {}
-
-        options = FirefoxOptions()
-        options.add_argument("--headless")
-
-        self.driver = webdriver.Firefox(options)
+    def __init__(self, url, filters: ScraperFilter | None = None):
+        super().__init__(url, filters) 
 
     def select_city(self, city: str) -> bool:
+        if self.driver is None:
+            raise Exception("Driver is not initialized")
+        
         # TODO: Dynamically select CSS selector (should be available as front end)
         city_select_element = self.driver.find_element(By.CSS_SELECTOR, "#Main_ctl00_ctl03")
         city_options = city_select_element.find_elements(By.TAG_NAME, "option")
@@ -54,6 +43,9 @@ class SchepScraper(BaseScraper):
         return False
     
     def get_property_selection(self) -> List[Property]:
+        if self.driver is None:
+            raise Exception("Driver is not initialized")
+
         properties: List[Property] = []
 
         WebDriverWait(self.driver, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, ".woningList")))
@@ -79,7 +71,7 @@ class SchepScraper(BaseScraper):
             address = bs.find(class_="straat").get_text() # type: ignore
             city = bs.find(class_="plaats").get_text() # type: ignore
             area = info_element.find(lambda tag:tag.name=="div" and "Woonoppervlak" in tag.text).get_text() # type: ignore
-            image = f"{self.BASE_URL}{bs.find(class_='hoofdfotocontainer').find('img').attrs['src']}" # type: ignore
+            image = f"{self.url}{bs.find(class_='hoofdfotocontainer').find('img').attrs['src']}" # type: ignore
             room_element = info_element.find(lambda tag:tag.name=="div" and "Kamers" in tag.text) # type: ignore
             rooms = room_element.get_text() if room_element else None # type: ignore
             available = info_element.find(class_="Beschikbaar").find("span").get_text() # type: ignore
@@ -99,32 +91,50 @@ class SchepScraper(BaseScraper):
             
         return properties
 
-    def scrape(self) -> List[Property]:
+    def scrape(self) -> bool:
         properties: List[Property] = []
-        self.driver.get(f"{self.BASE_URL}/Verhuur")
+        # Initialize the web driver
+        self.init_driver()
+
         # Check for cookie wall and accept it
         try:
+            if self.driver is None:
+                raise Exception("Driver is not initialized")
+            
+            self.driver.get(f"{self.url}/Verhuur")
             WebDriverWait(self.driver, 20).until(EC.presence_of_element_located((By.ID, "ctl17_GiveFullConsent")))
             self.driver.find_element(By.ID, "ctl17_GiveFullConsent").click()
         except Exception as e:
-            logger.info(f"Cookie wall was not found for: {self.BASE_URL} - {e}")
+            logger.info(f"Cookie wall was not found for: {self.url} - {e}")
 
         if self.filters and self.filters.city:
             for city in self.filters.city:
-                self.driver.get(f"{self.BASE_URL}/Verhuur")
                 try:
+                    if self.driver is None:
+                        raise Exception("Driver is not initialized")
+                
+                    self.driver.get(f"{self.url}/Verhuur")
                     if self.select_city(city):
                         # Simulate search button click
                         # TODO: Dynamically select CSS selector (should be available as front end)
                         self.driver.find_element(By.CSS_SELECTOR, "#Main_ctl00_WoningZoekButton").click()
                         properties.extend(self.get_property_selection())
                     else:
-                        logger.error(f"City: {city} was not found for: {self.BASE_URL}")
+                        logger.error(f"City: {city} was not found for: {self.url}")
                 except Exception as e:
+                    if self.driver:
+                        self.driver.close()
                     logger.error(f"Exception when scraping - {e}")
-                    logger.error(traceback.format_exc())
+                    raise HTTPException(status_code=500, detail=f"Exception when scraping - {e}")
         else:
-            logger.error(f"No filters were found for: {self.BASE_URL}")
+            if self.driver:
+                self.driver.close()
+            logger.error(f"No filters were found for: {self.url}")
+            raise HTTPException(status_code=400, detail=f"No filters were found for: {self.url}")
         
-        self.driver.close()
-        return properties
+        if self.driver:
+            self.driver.close()
+
+        # TODO: Save properties to database
+
+        return True

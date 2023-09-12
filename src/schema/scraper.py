@@ -3,13 +3,7 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
-class Scraper(BaseModel):
-    id: int
-    url: str | None = None
-    scraper: str | None = None
-    created_on: datetime
-    updated_on: datetime | None = None
-    deleted_on: datetime | None = None
+from .property import Property
 
 class ScraperFilter(BaseModel):
     city: List[str]
@@ -23,4 +17,20 @@ class ScraperFilter(BaseModel):
 class ScraperRequest(BaseModel):
     url: str | None = None
     scraper: str | None = None
-    filter: ScraperFilter | None = None
+    executed: bool | None = False
+    filters: ScraperFilter | None = None
+
+class Scraper(BaseModel):
+    id: int | None = None
+    url: str | None = None
+    scraper: str | None = None
+    filters: ScraperFilter | None = None
+    state: str = "IDLE"
+    task_id: str | None = None
+    created_on: datetime = datetime.now()
+    updated_on: datetime | None = None
+    deleted_on: datetime | None = None
+    properties: list[Property] = []
+
+    class Config:
+        from_attributes = True
