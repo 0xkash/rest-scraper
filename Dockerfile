@@ -6,16 +6,16 @@ ENV PYTHONPATH=/app/src
 ENV GECKODRIVER_VER v0.33.0
 ENV FIREFOX_VER 87.0
 
-# Install reqired packages
+# Install required packages for selenium
 RUN set -x \
-    && apt update \
-    && apt upgrade -y \
-    && apt install -y \
+    && apt-get update \
+    && apt-get upgrade -y \
+    && apt-get install -y \
         firefox-esr \
-    && apt install -y \
+    && apt-get install -y \
         curl \
-    && apt install -y \
-        bzip2
+    && apt-get install -y \
+        bzip2 
 
 # Add latest FireFox
 RUN set -x \
