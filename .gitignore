@@ -162,5 +162,8 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-# PostgreSQL
-postgres-data/
+# PostgreSQL & pgadmin
+docker/postgres-data/
+!docker/postgres-data/.gitkeep
+docker/pgadmin-data/
+!docker/pgadmin-data/.gitkeep
