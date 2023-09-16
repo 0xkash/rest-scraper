@@ -11,3 +11,6 @@ sqlalchemy
 sqlalchemy-utils
 psycopg2-binary
 alembic
+redis
+celery
+flower
