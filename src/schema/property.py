@@ -3,7 +3,7 @@ from datetime import datetime
 from pydantic import BaseModel
 
 class Property(BaseModel):
-    id: int
+    id: int | None = None
     url: str
     address: str
     city: str
