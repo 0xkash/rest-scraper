@@ -4,7 +4,6 @@ services:
   app:
     build: .
     container_name: python-server
-    command: bash -c "alembic upgrade head && uvicorn src.main:app --host 0.0.0.0 --port 80 --reload"
     ports:
       - 80:80
       - 5678:5678
@@ -23,7 +22,7 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - ./docker/postgres-data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
 
   pgadmin:
     image: dpage/pgadmin4:latest
@@ -35,3 +34,59 @@ services:
       - 5050:80
     depends_on:
       - db
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - 6379:6379
+
+  celery_worker:
+    image: fastapi_celery_example_celery_worker
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: celery_worker
+    command: /start-celeryworker.sh
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+
+  celery_beat:
+    image: fastapi_celery_example_celery_beat
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: celery_beat
+    command: /start-celerybeat.sh
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+
+  flower:
+    image: fastapi_celery_example_celery_flower
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: /start-flower.sh
+    container_name: celery_flower
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    ports:
+      - 5555:5555
+    depends_on:
+      - redis
+      - db
+
+volumes:
+  postgres_data:
