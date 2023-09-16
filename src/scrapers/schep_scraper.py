@@ -150,3 +150,4 @@ class SchepScraper(BaseScraper):
 
         # TODO: Save properties to database
         logger.info(f"Scraping DONE! Properties found: {len(properties)}")
+        return list(map(lambda property: property.model_dump(), properties))
