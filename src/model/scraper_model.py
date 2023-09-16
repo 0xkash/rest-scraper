@@ -11,7 +11,7 @@ class ScraperModel(BaseModel):
     __tablename__ = 'scrapers'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    url = Column(String, nullable=True)
+    url = Column(String, nullable=False)
     scraper = Column(String, nullable=True)
     filters = Column(PydanticType(ScraperFilter), nullable=True)
     state = Column(String, nullable=False)
