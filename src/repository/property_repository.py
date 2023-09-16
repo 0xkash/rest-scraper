@@ -13,6 +13,7 @@ class PropertyRepository:
     def create(self, property: Property) -> PropertyModel:
         property_model = PropertyModel(
                 url=property.url,
+                address=property.address,
                 city=property.city,
                 price=property.price,
                 area=property.area,
