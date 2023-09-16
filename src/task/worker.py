@@ -21,6 +21,6 @@ def queue_scraper_task(scraper_dump):
     scraper_model: Scraper = Scraper(**scraper_dump)
     if scraper_model.id and scraper_model.scraper == "SchepScraper":
         scraper = SchepScraper(scraper_model.id, scraper_model.url, scraper_model.filters)
-        scraper.run()
+        return scraper.run()
     
-    return True
+    return []

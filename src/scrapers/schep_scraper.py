@@ -13,6 +13,8 @@ from schema.scraper import ScraperFilter
 from schema.property import Property
 from scrapers.base_scraper import BaseScraper
 from mapper.property_mapper import PropertyMapper
+from repository.property_repository import PropertyRepository
+from utils.database import Database
 
 from utils.logger import Logger
 
@@ -89,6 +91,14 @@ class SchepScraper(BaseScraper):
                 "images": image,
                 "scraper_id": self.id,
             }).map()
+            # Obtain a session from the generator and pass it to PropertyRepository
+            db_session = next(Database.get_session(), None)  # Get the session from the generator
+            if db_session:
+                property = Property.model_validate(PropertyRepository(db_session).create(property))
+                db_session.close()  # Don't forget to close the session when done
+            else:
+                logger.error("Database session is None")
+
             properties.append(property)
             
         return properties
@@ -140,3 +150,4 @@ class SchepScraper(BaseScraper):
 
         # TODO: Save properties to database
         logger.info(f"Scraping DONE! Properties found: {len(properties)}")
+        return list(map(lambda property: property.model_dump(), properties))

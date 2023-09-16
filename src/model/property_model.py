@@ -11,6 +11,7 @@ class PropertyModel(BaseModel):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     url = Column(String, nullable=False)
+    address = Column(String, nullable=False)
     city = Column(String, nullable=False)
     price = Column(Numeric(10, 2), nullable=False)
     area = Column(Numeric, nullable=False)
