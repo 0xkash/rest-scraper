@@ -1,4 +1,5 @@
 from typing import List
+import traceback
 
 from fastapi import HTTPException
 
@@ -18,8 +19,8 @@ from utils.logger import Logger
 logger = Logger(__name__, "./logs/schep-scraper-%Y-%m-%d.log")
 
 class SchepScraper(BaseScraper):
-    def __init__(self, url, filters: ScraperFilter | None = None):
-        super().__init__(url, filters) 
+    def __init__(self, id, url, filters: ScraperFilter | None = None):
+        super().__init__(id, url, filters) 
 
     def select_city(self, city: str) -> bool:
         if self.driver is None:
@@ -85,13 +86,14 @@ class SchepScraper(BaseScraper):
                 "area": area,
                 "available_on": available,
                 "rooms": rooms,
-                "images": image
+                "images": image,
+                "scraper_id": self.id,
             }).map()
             properties.append(property)
             
         return properties
 
-    def scrape(self) -> bool:
+    def run(self):
         properties: List[Property] = []
         # Initialize the web driver
         self.init_driver()
@@ -125,6 +127,7 @@ class SchepScraper(BaseScraper):
                     if self.driver:
                         self.driver.close()
                     logger.error(f"Exception when scraping - {e}")
+                    logger.error(traceback.format_exc())
                     raise HTTPException(status_code=500, detail=f"Exception when scraping - {e}")
         else:
             if self.driver:
@@ -136,5 +139,4 @@ class SchepScraper(BaseScraper):
             self.driver.close()
 
         # TODO: Save properties to database
-
-        return True
+        logger.info(f"Scraping DONE! Properties found: {len(properties)}")
