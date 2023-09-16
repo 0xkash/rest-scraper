@@ -42,7 +42,7 @@ class PropertyMapper:
             elif attribute == "images":
                 property[attribute] = self.parse_images(self.attributes[attribute])
             else:
-                property[attribute] = self.attributes[attribute].lstrip()
+                property[attribute] = self.attributes[attribute].lstrip() if type(self.attributes[attribute]) is str else self.attributes[attribute]
 
         return Property(**property)
     
