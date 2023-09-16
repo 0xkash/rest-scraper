@@ -4,7 +4,8 @@ from selenium.webdriver import FirefoxOptions
 from schema.scraper import ScraperFilter
 
 class BaseScraper:
-    def __init__(self, url: str | None = None, filters: ScraperFilter | None = None):
+    def __init__(self, id: int, url: str | None = None, filters: ScraperFilter | None = None):
+        self.id = id
         self.url = url
         self.filters = filters
 
@@ -21,6 +22,6 @@ class BaseScraper:
         options.add_argument("--headless")
         self.driver = webdriver.Firefox(options)
 
-    def scrape(self):
+    def run(self):
         # TODO: Implement this method
         pass
