@@ -1,6 +1,5 @@
 from fastapi import Depends, HTTPException
 from sqlalchemy.orm import Session
-import json
 
 from schema.scraper import Scraper
 from model.scraper_model import ScraperModel
@@ -42,3 +41,6 @@ class ScraperRepository:
         if not db_scraper:
             raise HTTPException(status_code=404, detail="Scraper not found")
         return db_scraper
+    
+    def list(self):
+        return self.db.query(ScraperModel).all()

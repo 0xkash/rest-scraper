@@ -1,4 +1,3 @@
-from typing import List
 from fastapi import Depends, HTTPException
 
 from repository.scraper_repository import ScraperRepository
@@ -25,6 +24,9 @@ class ScraperService:
         if scraper.task_id and scraper.state is not "IDLE":
             scraper.state = queue_scraper_task.AsyncResult(scraper.task_id).state
         return scraper
+    
+    def list(self):
+        return self.repository.list()
     
     def run(self, id: int):
         scraper: Scraper = Scraper.model_validate(self.repository.get(id))

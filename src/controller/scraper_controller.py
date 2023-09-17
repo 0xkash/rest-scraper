@@ -1,6 +1,6 @@
 from validators import url as url_validator
 
-from fastapi import APIRouter, status, Depends, HTTPException
+from fastapi import APIRouter, status, Depends
 from fastapi.responses import JSONResponse
 from fastapi_router_controller import Controller
 
@@ -73,6 +73,16 @@ class ScraperController:
     )
     def get(self, id: int):
         return self.service.get(id)
+    
+    @controller.router.get(
+        "",
+        tags=["scraper"],
+        summary="Get list of scrapers",
+        response_model=list[Scraper],
+        status_code=status.HTTP_200_OK
+    )
+    def list(self):
+        return self.service.list()
     
     @controller.router.post(
         "/{id}/run",
