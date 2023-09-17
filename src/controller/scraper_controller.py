@@ -1,6 +1,6 @@
 from validators import url as url_validator
 
-from fastapi import APIRouter, status, Depends, HTTPException
+from fastapi import APIRouter, status, Depends
 from fastapi.responses import JSONResponse
 from fastapi_router_controller import Controller
 

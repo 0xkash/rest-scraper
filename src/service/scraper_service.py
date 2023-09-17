@@ -25,7 +25,7 @@ class ScraperService:
             scraper.state = queue_scraper_task.AsyncResult(scraper.task_id).state
         return scraper
     
-    def list(self) -> list[Scraper]:
+    def list(self):
         return self.repository.list()
     
     def run(self, id: int):
