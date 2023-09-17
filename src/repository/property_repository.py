@@ -2,6 +2,9 @@ from fastapi import Depends
 from sqlalchemy.orm import Session
 
 from schema.property import Property
+from fastapi import Depends, HTTPException
+from sqlalchemy.orm import Session
+
 from model.property_model import PropertyModel
 
 from utils.database import Database
@@ -28,3 +31,12 @@ class PropertyRepository:
         self.db.commit()
         
         return property_model
+    
+    def get(self, id: int):
+        db_property = self.db.query(PropertyModel).filter(PropertyModel.id == id).first()
+        if not db_property:
+            raise HTTPException(status_code=404, detail="Property not found")
+        return db_property
+    
+    def list(self):
+        return self.db.query(PropertyModel).all()
