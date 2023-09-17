@@ -1,6 +1,5 @@
 from fastapi import Depends, HTTPException
 from sqlalchemy.orm import Session
-import json
 
 from schema.scraper import Scraper
 from model.scraper_model import ScraperModel

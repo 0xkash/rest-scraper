@@ -1,4 +1,3 @@
-from typing import List
 from fastapi import Depends, HTTPException
 
 from repository.scraper_repository import ScraperRepository
