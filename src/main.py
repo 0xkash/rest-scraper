@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
 
 from fastapi_router_controller import Controller, ControllersTags
 
@@ -19,6 +20,15 @@ app = FastAPI(
     debug=Config.get("ENVIRONMENT") == "development",
     redoc_url=Config.get("DOCS_PATH"),
     openapi_tags=ControllersTags
+)
+
+# CORS Middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=Config.get("CORS_ALLOW_ORIGINS").split(","),
+    allow_credentials=Config.get("CORS_ALLOW_CREDENTIALS"),
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Handle all exceptions and validation errors
