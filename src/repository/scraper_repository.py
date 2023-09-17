@@ -41,3 +41,6 @@ class ScraperRepository:
         if not db_scraper:
             raise HTTPException(status_code=404, detail="Scraper not found")
         return db_scraper
+    
+    def list(self) -> list[Scraper]:
+        return self.db.query(ScraperModel).all()

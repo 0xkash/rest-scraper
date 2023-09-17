@@ -74,6 +74,16 @@ class ScraperController:
     def get(self, id: int):
         return self.service.get(id)
     
+    @controller.router.get(
+        "",
+        tags=["scraper"],
+        summary="Get list of scrapers",
+        response_model=list[Scraper],
+        status_code=status.HTTP_200_OK
+    )
+    def list(self):
+        return self.service.list()
+    
     @controller.router.post(
         "/{id}/run",
         tags=["scraper"], 
